@@ -1,0 +1,33 @@
+version: 2.1
+
+workflows:
+  main:
+    jobs:
+      - package_and_upload:
+          context: Alloy
+
+jobs:
+  package_and_upload:
+    docker:
+      - image: cimg/base:2020.01
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
+    environment:
+      BUILD_VERSION: 1.0.0
+      OUTPUT_NAME: forge-$BUILD_VERSION-$CIRCLE_BUILD_NUM.tar.gz
+    steps:
+      - checkout
+      - run:
+          name: Package
+          command: find forge -printf "%P\n" | tar -C forge -czvf $OUTPUT_NAME --no-recursion -T -
+      - run:
+          name: Install jFrog CLI
+          command: curl -fL https://getcli.jfrog.io | sh
+      - run:
+          name: Upload
+          command: |
+            ./jfrog rt c --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --password $ARTIFACTORY_PASSWORD --interactive=false
+            ./jfrog rt u $OUTPUT_NAME file-staging-local/$CIRCLE_BRANCH/$BUILD_VERSION/ --build-name=$CIRCLE_BRANCH --build-number=$CIRCLE_BUILD_NUM
+            ./jfrog rt bce $CIRCLE_BRANCH $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
+            ./jfrog rt bp $CIRCLE_BRANCH $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
