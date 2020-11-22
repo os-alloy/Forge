@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Upload
           command: |
-            BRANCH_SHORT=$(echo $CIRCLE_BUILD_NUM | sed "s/.*\///" | cut -c-9)
+            BRANCH_SHORT=$(echo $CIRCLE_BRANCH | sed "s/.*\///" | cut -c-9)
             BUILD_NAME="$BRANCH_SHORT-$BUILD_VERSION"
 
             ./jfrog rt c --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --password $ARTIFACTORY_PASSWORD --interactive=false
