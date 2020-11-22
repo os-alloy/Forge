@@ -30,6 +30,6 @@ jobs:
             BUILD_NAME="$BRANCH_SHORT-$BUILD_VERSION"
 
             ./jfrog rt c --url $ARTIFACTORY_URL --user $ARTIFACTORY_USER --password $ARTIFACTORY_PASSWORD --interactive=false
-          ./jfrog rt u forge-$BUILD_VERSION-$CIRCLE_BUILD_NUM.tar.gz file-staging-local/$BRANCH_SHORT/$BUILD_VERSION/ --build-name=$BUILD_NAME --build-number=$CIRCLE_BUILD_NUM
+            ./jfrog rt u forge-$BUILD_VERSION-$CIRCLE_BUILD_NUM.tar.gz file-staging-local/$BRANCH_SHORT/$BUILD_VERSION/ --build-name=$BUILD_NAME --build-number=$CIRCLE_BUILD_NUM
             ./jfrog rt bce $BUILD_NAME $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
             ./jfrog rt bp $BUILD_NAME $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
